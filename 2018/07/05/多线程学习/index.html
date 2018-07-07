@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="一半青涩">
 <meta property="og:description" content="相关概念上下文切换: 任务从保存到再加载的过程就是一次上下文切换线程和进程区别：每个进程拥有自己的一套变量，而线程则共享数据。可见性：当一个线程修改一个共享变量时，另一个线程能读到这个修改的值。如果一个字段被声明为volatile,Java线程内存模型确保所有的线程看到这个变量的值是一致的。 volatile的实现原则-  将当前处理器缓存行的数据写回到系统内存 -  这个写回内存的操作会使其他C">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-06T15:48:41.533Z">
+<meta property="og:updated_time" content="2018-07-07T06:04:54.919Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程学习">
 <meta name="twitter:description" content="相关概念上下文切换: 任务从保存到再加载的过程就是一次上下文切换线程和进程区别：每个进程拥有自己的一套变量，而线程则共享数据。可见性：当一个线程修改一个共享变量时，另一个线程能读到这个修改的值。如果一个字段被声明为volatile,Java线程内存模型确保所有的线程看到这个变量的值是一致的。 volatile的实现原则-  将当前处理器缓存行的数据写回到系统内存 -  这个写回内存的操作会使其他C">
@@ -355,7 +355,9 @@
         <h4 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h4><p>上下文切换: 任务从保存到再加载的过程就是一次上下文切换<br>线程和进程区别：每个进程拥有自己的一套变量，而线程则共享数据。<br>可见性：当一个线程修改一个共享变量时，另一个线程能读到这个修改的值。<br>如果一个字段被声明为volatile,Java线程内存模型确保所有的线程看到这个变量的值是一致的。</p>
 <h4 id="volatile的实现原则"><a href="#volatile的实现原则" class="headerlink" title="volatile的实现原则"></a>volatile的实现原则</h4><pre><code>-  将当前处理器缓存行的数据写回到系统内存
 -  这个写回内存的操作会使其他CUP里缓存了该内存地址的数据无效。
-</code></pre><h4 id="Synchonized的实现原理"><a href="#Synchonized的实现原理" class="headerlink" title="Synchonized的实现原理"></a>Synchonized的实现原理</h4><p>JVM基于进入和退出Monitor对象来实现方法同步和代码块同步。<br>代码块用monitorenter和monitorexit指令实现。<br>monitorenter指令是在编译后插入到同步代码块的开始位置，<br>而monitorexit是插入到方法结束处和异常处，<br>JVM要保证每个每个monitorenter必须有对应的mnitorexit与之匹配。<br>任何对象都有一个monitor与之关联，当且有一个monitor被持有后，它将处于锁定状态。<br>线程执行到monitorenter指令时，将会尝试获取对象所对应的monitor所有权。</p>
+</code></pre><h4 id="Synchonized的实现原理"><a href="#Synchonized的实现原理" class="headerlink" title="Synchonized的实现原理"></a>Synchonized的实现原理</h4><blockquote>
+<p>JVM基于进入和退出Monitor对象来实现方法同步和代码块同步。<br>代码块用monitorenter和monitorexit指令实现。<br>monitorenter指令是在编译后插入到同步代码块的开始位置，<br>而monitorexit是插入到方法结束处和异常处，<br>JVM要保证每个每个monitorenter必须有对应的mnitorexit与之匹配。<br>任何对象都有一个monitor与之关联，当且有一个monitor被持有后，它将处于锁定状态。<br>线程执行到monitorenter指令时，将会尝试获取对象所对应的monitor所有权。</p>
+</blockquote>
 
       
     </div>
@@ -466,7 +468,7 @@
                 alt="杨威" />
             
               <p class="site-author-name" itemprop="name">杨威</p>
-              <p class="site-description motion-element" itemprop="description">明日复明日，明日何其多</p>
+              <p class="site-description motion-element" itemprop="description">我的真实，会为我证明自己</p>
           </div>
 
           <nav class="site-state motion-element">
