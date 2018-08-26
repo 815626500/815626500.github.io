@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next pisces use-motion" lang="zh-Hans">
+<html class="theme-next muse use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="12345678910111213141516171819202122232425262728public class Singleton &amp;#123;    private static volatile Singleton instance;    private Singleton()&amp;#123;&amp;#125;    public static Singleton getInstance()&amp;">
+<meta name="description" content="双重检查锁定若不使用volatile，两个线程同时访问getInstance()方法，其中一个线程正在初始化对象，        另一个线程检查instance不为空，初始化可以理解为：      1.分配对象的内存空间；      2.初始化对象；      3.设置instance指向刚分配的内存地址。      2和3操作可能被重排序，此时初始化操作并未完成，使用volatile关键字可以">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="延迟加载">
+<meta property="og:title" content="延迟加载和单例">
 <meta property="og:url" content="http://yoursite.com/2018/07/15/延迟加载/index.html">
-<meta property="og:site_name" content="一半青涩">
-<meta property="og:description" content="12345678910111213141516171819202122232425262728public class Singleton &amp;#123;    private static volatile Singleton instance;    private Singleton()&amp;#123;&amp;#125;    public static Singleton getInstance()&amp;">
+<meta property="og:site_name" content="我的博客">
+<meta property="og:description" content="双重检查锁定若不使用volatile，两个线程同时访问getInstance()方法，其中一个线程正在初始化对象，        另一个线程检查instance不为空，初始化可以理解为：      1.分配对象的内存空间；      2.初始化对象；      3.设置instance指向刚分配的内存地址。      2和3操作可能被重排序，此时初始化操作并未完成，使用volatile关键字可以">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-15T14:46:06.253Z">
+<meta property="og:updated_time" content="2018-08-26T07:23:51.921Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="延迟加载">
-<meta name="twitter:description" content="12345678910111213141516171819202122232425262728public class Singleton &amp;#123;    private static volatile Singleton instance;    private Singleton()&amp;#123;&amp;#125;    public static Singleton getInstance()&amp;">
+<meta name="twitter:title" content="延迟加载和单例">
+<meta name="twitter:description" content="双重检查锁定若不使用volatile，两个线程同时访问getInstance()方法，其中一个线程正在初始化对象，        另一个线程检查instance不为空，初始化可以理解为：      1.分配对象的内存空间；      2.初始化对象；      3.设置instance指向刚分配的内存地址。      2和3操作可能被重排序，此时初始化操作并未完成，使用volatile关键字可以">
 
 
 
@@ -98,7 +98,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Pisces',
+    scheme: 'Muse',
     version: '5.1.4',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
@@ -126,7 +126,7 @@
 
 
 
-  <title>延迟加载 | 一半青涩</title>
+  <title>延迟加载和单例 | 我的博客</title>
   
 
 
@@ -156,7 +156,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">一半青涩</span>
+        <span class="site-title">我的博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,7 +296,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一半青涩">
+      <meta itemprop="name" content="我的博客">
     </span>
 
     
@@ -304,7 +304,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">延迟加载</h1>
+          <h1 class="post-title" itemprop="name headline">延迟加载和单例</h1>
         
 
         <div class="post-meta">
@@ -391,7 +391,17 @@
       
 
       
-        <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class)&#123;</span><br><span class="line">                <span class="keyword">if</span>(instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">                    instance=<span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InstanceFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Singleton instance=<span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Singleton.instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <hr>
+<h5 id="双重检查锁定"><a href="#双重检查锁定" class="headerlink" title="双重检查锁定"></a>双重检查锁定</h5><p>若不使用volatile，两个线程同时访问getInstance()方法，其中一个线程正在初始化对象，<br>        另一个线程检查instance不为空，初始化可以理解为：<br>      1.分配对象的内存空间；<br>      2.初始化对象；<br>      3.设置instance指向刚分配的内存地址。<br>      2和3操作可能被重排序，此时初始化操作并未完成，使用volatile关键字可以禁止重排序。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoubleCheckedLocking</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Instance instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instance <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (DoubleCheckedLocking.class)&#123;</span><br><span class="line">                <span class="keyword">if</span>(instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">                    instance=<span class="keyword">new</span> Instance();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h5 id="基于类初始化的解决方案"><a href="#基于类初始化的解决方案" class="headerlink" title="基于类初始化的解决方案"></a>基于类初始化的解决方案</h5><p>JVM在类的初始化阶段，会执行类的初始化，期间JVM会去获取一个锁。<br>这个锁可以同步多个线程对同一个类的初始化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InstanceFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Instance</span></span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Instance instance=<span class="keyword">new</span> Instance();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instance <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Singleton.instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h5 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton instance=<span class="keyword">new</span> Singleton();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用枚举单例</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton &#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>《Java并发编程的艺术》<br>《Effective Java》</p>
+
       
     </div>
     
@@ -415,8 +425,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/05/多线程学习/" rel="next" title="基本概念和原理">
-                <i class="fa fa-chevron-left"></i> 基本概念和原理
+              <a href="/2018/07/01/2018年中总结/" rel="next" title="2018年中总结">
+                <i class="fa fa-chevron-left"></i> 2018年中总结
               </a>
             
           </div>
@@ -455,7 +465,7 @@
   
     <div class="comments" id="comments">
       <div class="ds-thread" data-thread-key="2018/07/15/延迟加载/"
-           data-title="延迟加载" data-url="http://yoursite.com/2018/07/15/延迟加载/">
+           data-title="延迟加载和单例" data-url="http://yoursite.com/2018/07/15/延迟加载/">
       </div>
     </div>
 
@@ -482,8 +492,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -492,7 +511,7 @@
                 alt="杨威" />
             
               <p class="site-author-name" itemprop="name">杨威</p>
-              <p class="site-description motion-element" itemprop="description">我的真实，会为我证明自己</p>
+              <p class="site-description motion-element" itemprop="description">好好学习</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -502,7 +521,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -539,6 +558,22 @@
       </section>
 
       
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#双重检查锁定"><span class="nav-number">1.</span> <span class="nav-text">双重检查锁定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于类初始化的解决方案"><span class="nav-number">2.</span> <span class="nav-text">基于类初始化的解决方案</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#单例"><span class="nav-number">3.</span> <span class="nav-text">单例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
 
       
 
@@ -570,7 +605,7 @@
 
 
 
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
 
 
 
@@ -689,13 +724,6 @@
 
   
   
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
-
-
 
   
   <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>

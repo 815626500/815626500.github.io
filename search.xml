@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[延迟加载]]></title>
+    <title><![CDATA[延迟加载和单例]]></title>
     <url>%2F2018%2F07%2F15%2F%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD%2F</url>
-    <content type="text"><![CDATA[12345678910111213141516171819202122232425262728public class Singleton &#123; private static volatile Singleton instance; private Singleton()&#123;&#125; public static Singleton getInstance()&#123; if(instance==null)&#123; synchronized (Singleton.class)&#123; if(instance==null)&#123; instance=new Singleton(); &#125; &#125; &#125; return instance; &#125;&#125;public class InstanceFactory &#123; private static class Singleton&#123; public static Singleton instance=new Singleton(); &#125; public static Singleton getInstance()&#123; return Singleton.instance; &#125;&#125;]]></content>
-      <categories>
-        <category>多线程学习</category>
-      </categories>
-  </entry>
-  <entry>
-    <title><![CDATA[基本概念和原理]]></title>
-    <url>%2F2018%2F07%2F05%2F%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AD%A6%E4%B9%A0%2F</url>
-    <content type="text"><![CDATA[基本都来自《并发编程的艺术》 线程 进程中负责程序执行的控制单元（执行路径）。 上下文切换 任务从保存到再加载的过程就是一次上下文切换。 线程和进程区别 每个进程拥有自己的一套变量，而线程则共享数据。 可见性 当一个线程修改一个共享变量时，另一个线程能读到这个修改的值。 volatile的定义 如果一个字段被声明为volatile,Java线程内存模型确保所有的线程看到这个变量的值是一致的。 volatile的实现原理 1.lock前缀指令会引起处理器缓存回写到内存 2.一个处理器的缓存回写到内存会导致其他处理器的缓存无效 Synchonized的实现原理JVM基于进入和退出Monitor对象来实现方法同步和代码块同步。 代码块用monitorenter和monitorexit指令实现。 monitorenter指令是在编译后插入到同步代码块的开始位置 monitorexit是插入到方法结束处和异常处。 JVM要保证每个每个monitorenter必须有对应的monitorexit与之匹配。 任何对象都有一个monitor与之关联，当且有一个monitor被持有后，它将处于锁定状态。 线程执行到monitorenter指时,将会尝试获取对象所对应的monitor所有权, 即尝试获取对象的锁。 偏向锁轻量级锁重量级锁锁的内存语义线程A释放一个锁，实质上是线程A向接下来将要获取这个锁的某个线程发出了 （线程A对共享变量所做修改的）消息。 线程B获取一个锁，实质上是线程B接受了之前某个线程发出了 （在释放锁之前对共享变量所做修改的）消息。 线程A释放锁，随后线程B获取这个锁，这个过程实质上是线程A通过主内存向线程B在发送消息。 锁的内存语义的实现concurrent包的实现处理器原子操作实现的原理使用总线锁保证原子性 使用缓存锁定来保证原子性 Java内存模型的抽象结构 线程之间的共享变量存储在主内存，每个线程都有一个私有的本地内存, 本地内存中存储了该线程以读/写共享变量的副本。 本地内存是JMM的一个抽象概念，并不真实存在。]]></content>
+    <content type="text"><![CDATA[双重检查锁定若不使用volatile，两个线程同时访问getInstance()方法，其中一个线程正在初始化对象， 另一个线程检查instance不为空，初始化可以理解为： 1.分配对象的内存空间； 2.初始化对象； 3.设置instance指向刚分配的内存地址。 2和3操作可能被重排序，此时初始化操作并未完成，使用volatile关键字可以禁止重排序。 12345678910111213141516public class DoubleCheckedLocking &#123; private static volatile Instance instance; public static Instance getInstance()&#123; if(instance==null)&#123; synchronized (DoubleCheckedLocking.class)&#123; if(instance==null)&#123; instance=new Instance(); &#125; &#125; &#125; return instance; &#125;&#125; 基于类初始化的解决方案JVM在类的初始化阶段，会执行类的初始化，期间JVM会去获取一个锁。这个锁可以同步多个线程对同一个类的初始化。 123456789public class InstanceFactory &#123; private static class Instance&#123; public static Instance instance=new Instance(); &#125; public static Instance getInstance()&#123; return Singleton.instance; &#125;&#125; 单例123456789public class Singleton &#123; public static Singleton instance=new Singleton(); private Singleton()&#123;&#125;&#125;//使用枚举单例public enum Singleton &#123; INSTANCE;&#125; 《Java并发编程的艺术》《Effective Java》]]></content>
       <categories>
         <category>多线程学习</category>
       </categories>
   </entry>
   <entry>
     <title><![CDATA[2018年中总结]]></title>
-    <url>%2F2018%2F07%2F01%2F%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%2F</url>
-    <content type="text"><![CDATA[大学毕业刚好三年，从事Java工作也有一年半了，虽然中间有几个月的时间是在找工作。但从来没有像现在这样觉得时间过的如此之快。 第一份正式的工作还是表哥帮忙找的，在一家建筑公司打酱油，年前就辞职了，当初只和经理说了一声，也没有走正常的离职程序。辞职之和肯定要找工作，刚好有一个同学和我情况差不多，于是和他商量年后一起去武汉找工作。住了几天旅馆之后，联系了一位房东，我们只想租一个月，结果别人说最少半年，不过最后还是找到了一家满意的。毕业之后经历了很多类似的事情，从什么都不懂，到渐渐熟悉。 房东的家在一个校区里面，校门那里刚好有一家做IT培训的机构。因为高中时已经近似了，一想到做编程方面的工作，要每天面对电脑，有一次我还说这辈子是不会和计算机打交道了。大概一个半月之后，和我一起找工作的同学通过亲戚介绍，继续去做建筑方面的工作。后来自己在武汉多待了一个月，除了建筑方面的工作，也不知道能做啥，但又确实不喜欢。于是有了自学编程的想法，在网上下载了一些学习视频后便回家开始自学编程了，记得那时刚好是16年端午节。 在家学习了5个月，国庆假期结束之后继续开始找工作。用了接近两个月的时间，11月末，终于在广州找到了一份Java编程的工作。准备好好学一年就跳槽，但计划总赶不上变化，年后公司就解散了，所以说还是不能有不好的想法。 17年简单点说便是找工作，入职，离职，再入职。 一转眼已经到了2018年7月，年初的时侯给自己定的两个小目标，其中一个正在努力实现，在下次找工作时，工资一定要有所突破。最近喜欢上了看书，终于明白只有不断学习才能提高自己，看书的时候也是最充实的时候，期间也不会去想其它事情。书中自有黄金屋，古人不曾欺我也。 最后送给自己诺基亚N9不跟随的广告词，虽然诺基亚早已妥协。如果多一次选择，你想变成谁？不，这不是选择，而是对自己的怀疑。我能经得住多大的诋毁，就能担的起多少赞美。如果忍耐算是坚强，我选择抵抗。如果妥协算是努力，我选择争取。如果未来才会精彩，我也绝不放弃现在。你也许认为我疯狂，就像我认为你太过平常。我的真实，会为我证明自己。]]></content>
+    <url>%2F2018%2F07%2F01%2F2018%E5%B9%B4%E4%B8%AD%E6%80%BB%E7%BB%93%2F</url>
+    <content type="text"><![CDATA[大学毕业刚好三年，从事Java工作也有一年半了，虽然中间有几个月的时间是在找工作。但从来没有像现在这样觉得时间过的如此之快。 第一份正式的工作还是表哥帮忙找的，在一家建筑公司打酱油，只做了半年，过年的时候便辞职了。当初只和经理说了一声，也没有走正常的离职程序，现在回想起来觉得好傻。辞职之后肯定要找工作，刚好有一个同学和我情况差不多，于是和他商量年后一起去武汉找工作。住了几天旅馆之后，联系了一位房东，我们只想租一个月，结果别人说最少半年，不过最后还是找到了一家满意的。毕业之后经历了很多类似的事情，从什么都不懂，到渐渐熟悉。 房东的家在一个校区里面，校门那里刚好有一家做IT培训的机构。因为高中时视力已经近似了，一想到做编程方面的工作，要每天面对电脑，有一次我还说这辈子是不会和计算机打交道了，可如今却成了码农。大概一个半月之后，和我一起找工作的同学通过亲戚介绍，继续去做建筑方面的工作。而我在武汉多待了一个月，除了建筑方面的工作，也不知道能做啥，但又确实不喜欢，这次找工作算是以失败告终。后来不知为何有了学编程的想法，在网上下载了一些学习视频后便回家开始自学编程了，记得那时刚好是16年端午节。 在家学习了5个月，基本每天至少学4个小时，一边看视频，一边敲代。国庆假期结束之后继续开始找工作，用了接近两个月的时间，11月末，终于在广州找到了一份Java编程的工作。本准备好好学一年就跳槽，但计划总赶不上变化，年后公司就解散了，所以说还是不能有不好的想法。 17年简单点说便是找工作，入职，离职，再入职。 一转眼已经到了2018年7月，年初的时侯给自己定的两个小目标，其中一个正在努力实现，在下次找工作时，工资一定要有所突破。最近喜欢上了看书，终于明白只有不断学习才能提高自己，看书的时候也是最充实的时候，期间也不会去想其它事情。 有时候会觉得世界上为什么有这么多不公平？但和那些不幸的人比起来，自己却又算万幸。]]></content>
       <categories>
         <category>胡言乱语</category>
       </categories>
