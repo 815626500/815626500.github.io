@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[ThreadLocal学习]]></title>
+    <url>%2F2018%2F08%2F26%2FThreadLocal%2F</url>
+    <content type="text"><![CDATA[Thread、ThreadLocal、ThreadLocalMap之间的关系threadLocals是Thread类里面的成员变量。 ThreadLocalMap是ThreadLocal类的内部类。 使用set()方法时，实际上把值存储在每个线程的threadLocals中，key为ThreadLocal对象。 因为每个线程都有自己的threadLocals，所以也不存在并发问题。 123456789101112131415 //Thread ThreadLocal.ThreadLocalMap threadLocals = null; //ThreadLocalstatic class ThreadLocalMap &#123;static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; &#123; /** The value associated with this ThreadLocal. */ Object value; Entry(ThreadLocal&lt;?&gt; k, Object v) &#123; super(k); value = v; &#125; &#125; get() 12345678910111213141516 public T get() &#123; Thread t = Thread.currentThread(); ThreadLocalMap map = getMap(t); if (map != null) &#123; ThreadLocalMap.Entry e = map.getEntry(this); if (e != null) &#123; @SuppressWarnings("unchecked") T result = (T)e.value; return result; &#125; &#125; return setInitialValue();&#125; ThreadLocalMap getMap(Thread t) &#123; return t.threadLocals;&#125; set() 12345678public void set(T value) &#123; Thread t = Thread.currentThread(); ThreadLocalMap map = getMap(t); if (map != null) map.set(this, value); else createMap(t, value); &#125; remove() 12345 public void remove() &#123; ThreadLocalMap m = getMap(Thread.currentThread()); if (m != null) m.remove(this);&#125; withInitial() 123public static &lt;S&gt; ThreadLocal&lt;S&gt; withInitial(Supplier&lt;? extends S&gt; supplier) &#123; return new SuppliedThreadLocal&lt;&gt;(supplier);&#125;]]></content>
+      <categories>
+        <category>多线程学习</category>
+      </categories>
+  </entry>
+  <entry>
     <title><![CDATA[延迟加载和单例]]></title>
     <url>%2F2018%2F07%2F15%2F%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD%2F</url>
     <content type="text"><![CDATA[双重检查锁定若不使用volatile，两个线程同时访问getInstance()方法，其中一个线程正在初始化对象， 另一个线程检查instance不为空，初始化可以理解为： 1.分配对象的内存空间； 2.初始化对象； 3.设置instance指向刚分配的内存地址。 2和3操作可能被重排序，此时初始化操作并未完成，使用volatile关键字可以禁止重排序。 12345678910111213141516public class DoubleCheckedLocking &#123; private static volatile Instance instance; public static Instance getInstance()&#123; if(instance==null)&#123; synchronized (DoubleCheckedLocking.class)&#123; if(instance==null)&#123; instance=new Instance(); &#125; &#125; &#125; return instance; &#125;&#125; 基于类初始化的解决方案JVM在类的初始化阶段，会执行类的初始化，期间JVM会去获取一个锁。这个锁可以同步多个线程对同一个类的初始化。 123456789public class InstanceFactory &#123; private static class Instance&#123; public static Instance instance=new Instance(); &#125; public static Instance getInstance()&#123; return Singleton.instance; &#125;&#125; 单例123456789public class Singleton &#123; public static Singleton instance=new Singleton(); private Singleton()&#123;&#125;&#125;//使用枚举单例public enum Singleton &#123; INSTANCE;&#125; 《Java并发编程的艺术》《Effective Java》]]></content>
